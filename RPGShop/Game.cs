@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace RPGShop
 {
-    public enum Scene
-    {
-        
-    }
-
     struct Item
     {
         public int Cost;
@@ -20,8 +16,11 @@ namespace RPGShop
         private Player _player;
         private Shop _shop;
         private bool _gameOver = false;
-        private int _currentScene;
+        private int __currentScene = 0;
 
+        /// <summary>
+        /// Runs the main game loop.
+        /// </summary>
         public void Run()
         {
             Start();
@@ -34,24 +33,53 @@ namespace RPGShop
             End();
         }
 
+        /// <summary>
+        /// Is called at the start of the game, initializing everything the code needs.
+        /// </summary>
         private void Start()
         {
-
+            InitializeItems();
         }
 
+        /// <summary>
+        /// Updates the current scene.
+        /// </summary>
         private void Update()
         {
-
+            DisplayCurrentScene();
         }
 
+        /// <summary>
+        /// Is called when the game ends.
+        /// </summary>
         private void End()
         {
-
+            Console.WriteLine("Come again, friend!");
         }
 
         private void InitializeItems()
         {
+            // Initializes the player with 100 gold.
+            _player = new Player(100);
 
+            // Initializes every item in the shop.
+            Item healthPotion = new Item { Name = "Health Potion", Cost = 22 };
+
+            Item bigStick = new Item { Name = "Big Stick", Cost = 2 };
+
+            Item bigShield = new Item { Name = "Big Shield", Cost = 26 };
+
+            Item noveltyStatue = new Item { Name = "Novelty Statue", Cost = 6 };
+
+            Item wompusPlushy = new Item { Name = "Wompus Plushy", Cost = 12 };
+
+            Item freshJs = new Item { Name = "Fresh J's", Cost = 53 };
+
+            // Puts every item in the list.
+            Item[] itemList = new Item[] { healthPotion, bigStick, bigShield, noveltyStatue, wompusPlushy, freshJs };
+
+            // Constructs a new shop with the item list as its inventory.
+            _shop = new Shop(itemList);
         }
 
         /// <summary>
@@ -107,11 +135,18 @@ namespace RPGShop
             return inputRecieved;
         }
 
+        /// <summary>
+        /// Saves the players inventory and how much gold they currently have.
+        /// </summary>
         private void Save()
         {
 
         }
 
+        /// <summary>
+        /// Loads a previous save.
+        /// </summary>
+        /// <returns> If the player can load the game or not. </returns>
         private bool Load()
         {
 
@@ -119,12 +154,43 @@ namespace RPGShop
 
         private void DisplayCurrentScene()
         {
-
+            switch (__currentScene)
+            {
+                case 0:
+                    DisplayOpeningMenu();
+                    break;
+            }
         }
 
         private void DisplayOpeningMenu()
         {
+            int choice = GetInput("Welcome to my shop! You've come to browse, yes?", "Start Shopping",
+                "Load Inventory");
 
+            switch (choice)
+            {
+                case 0:
+                    Console.WriteLine("Come! Have a look around!");
+                    Console.ReadKey(true);
+                    Console.Clear();
+                    break;
+                case 1:
+                    Console.WriteLine("A previous customer, eh? Let me see.");
+                    Console.ReadKey(true);
+                    if (!Load())
+                    {
+                        Console.WriteLine("You have no record here. But come, shop away!");
+                        Console.ReadKey(true);
+                        Console.Clear();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Welcome back to the store, friend!");
+                        Console.ReadKey(true);
+                        Console.Clear();
+                    }
+                    break;
+            }
         }
 
         private string[] GetShopMenuOptions()
