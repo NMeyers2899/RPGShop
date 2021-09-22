@@ -25,9 +25,6 @@ namespace RPGShop
         {
             if(player.Gold < _inventory[position].Cost)
             {
-                Console.WriteLine("Very sorry, but I do not go any lower in my prices.");
-                Console.ReadKey(true);
-                Console.Clear();
                 return false;
             }
             else

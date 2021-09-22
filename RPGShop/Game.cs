@@ -291,46 +291,23 @@ namespace RPGShop
             int choice = GetInput("What will you be buying?", menuOptions);
 
             // If the player picks...
-            switch (choice)
+            if (choice == menuOptions.Length - 1)
             {
-                // ...this option, they buy the first item in the shop list.
-                case 0:
-                    _shop.Sell(_player, choice);
-                    break;
-                // ...this option, they buy the second item in the shop list.
-                case 1:
-                    _shop.Sell(_player, choice);
-                    break;
-                // ...this option, they buy the third item in the shop list.
-                case 2:
-                    _shop.Sell(_player, choice);
-                    break;
-                // ...this option, they buy the fourth item in the shop list.
-                case 3:
-                    _shop.Sell(_player, choice);
-                    break;
-                // ...this option, they buy the fifth item in the shop list.
-                case 4:
-                    _shop.Sell(_player, choice);
-                    break;
-                // ...this option, they buy the sixth item in the shop list.
-                case 5:
-                    _shop.Sell(_player, choice);
-                    break;
-                // ...this option, they save the game.
-                case 6:
-                    Save();
-                    Console.WriteLine("I'll keep these here for you.");
-                    Console.ReadKey(true);
-                    Console.Clear();
-                    break;
-                // ...this option, they exit the game.
-                case 7:
-                    _gameOver = true;
-                    break;
+                _gameOver = true;
             }
-
-
+            else if (choice == menuOptions.Length - 2)
+            {
+                Console.WriteLine("I'll keep these here for now.");
+                Console.ReadKey(true);
+                Console.Clear();
+                Save();
+            }
+            else if(!_shop.Sell(_player, choice))
+            {
+                Console.WriteLine("Very sorry. I do not go lower in my prices.");
+                Console.ReadKey(true);
+                Console.Clear();
+            }
         }
     }
 }
