@@ -15,61 +15,44 @@ namespace RPGShop
             get { return _gold; }
         }
 
-        public Item[] Inventory
-        {
-            get { return _inventory; }
-        }
-
         public Player(int gold)
         {
             _gold = gold;
 
-            _inventory = new Item[1];
+            _inventory = new Item[0];
         }
 
         /// <summary>
-        /// The player will attempt to buy an item.
+        /// The player will attempt to buy an item. If they can, their gold will decrement by the item's cost
+        /// and the item is added to their inventory.
         /// </summary>
         /// <param name="item"> The item that the player wishes to buy. </param>
         public void Buy(Item item)
         {
             // Creates a copy of the players inventory with a new space to add the item to.
             Item[] newPlayerInventory = new Item[_inventory.Length + 1];
+                
+            // ...if it can, it tells the player they purchased the item.
+            Console.WriteLine("You purchased " + item.Name + "!");
 
-            // Creates a new shop in order to sell the item.
-            Shop shop = new Shop(_inventory);
-
-            // Checks to see if the shop can sell the item...
-            if (!shop.Sell(this, item.Cost))
+            // Adds each item from the player's inventory to the new array.
+            for (int i = 0; i < _inventory.Length; i++)
             {
-                // ...if it can't, it tells the player that they do not have enough gold for it.
-                Console.WriteLine("Sorry friend, I do not go lower in my prices.");
-                Console.ReadKey(true);
-                Console.Clear();
+                newPlayerInventory[i] = _inventory[i];
             }
-            else
-            {
-                // ...if it can, it tells the player they purchased the item.
-                Console.WriteLine("You purchased " + item.Name + "!");
 
-                // Adds each item from the player's inventory to the new array.
-                for (int i = 0; i < _inventory.Length; i++)
-                {
-                    newPlayerInventory[i] = _inventory[i];
-                }
+            // Subtracts the item's cost from the player's gold.
+            _gold -= item.Cost;
 
-                // Subtracts the item's cost from the player's gold.
-                _gold -= item.Cost;
+            // Appends the new item to the end of the player's inventory.
+            newPlayerInventory[_inventory.Length] = item;
 
-                // Appends the new item to the end of the player's inventory.
-                newPlayerInventory[_inventory.Length] = item;
+            // Sets the old inventory equal to the new one so it adds the new item.
+            _inventory = newPlayerInventory;
 
-                // Sets the old inventory equal to the new one so it adds the new item.
-                _inventory = newPlayerInventory;
-
-                Console.ReadKey(true);
-                Console.Clear();
-            }
+            Console.ReadKey(true);
+            Console.Clear();
+            
         }
 
         // Gets the names of the items in the player's inventory.
@@ -93,9 +76,12 @@ namespace RPGShop
         {
             writer.WriteLine(_gold);
 
+            writer.WriteLine(_inventory.Length);
+
             for(int i = 0; i < _inventory.Length; i++)
             {
                 writer.WriteLine(_inventory[i].Name);
+                writer.WriteLine(_inventory[i].Cost);
             }
         }
 
@@ -103,18 +89,40 @@ namespace RPGShop
         /// Loads a player's gold and inventory.
         /// </summary>
         /// <param name="reader"> What reads the file. </param>
-        /// <returns></returns>
+        /// <returns> Whether or not the loading could be completed. </returns>
         public bool Load(StreamReader reader)
         { 
+            // Checks to see if the next line is a number, if it is it set the player's gold to it. If it can't...
             if(!int.TryParse(reader.ReadLine(), out _gold))
             {
+                // ...it returns false.
                 return false;
             }
 
+            int inventoryLength = 0;
+
+            // Checks to see if the next line is a number, if it is set the length of the player's inventory
+            // equal to it. If it cannot...
+            if(!int.TryParse(reader.ReadLine(), out inventoryLength))
+            {
+                // ...it returns false.
+                return false;
+            }
+
+            // Sets the inventory length equal to the number read.
+            _inventory = new Item[inventoryLength];
+
             int i = 0;
 
-            while(!(reader.ReadLine() == null))
+            while(!(reader.EndOfStream))
             {
+                _inventory[i].Name = reader.ReadLine();
+
+                if(!int.TryParse(reader.ReadLine(), out _inventory[i].Cost))
+                {
+                    return false;
+                }
+
                 i++;
             }
 

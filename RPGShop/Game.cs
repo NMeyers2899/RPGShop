@@ -260,8 +260,8 @@ namespace RPGShop
             }
 
             // Appends the new options to the item list from the shop.
-            shopOptions[shopItems.Length] = "7. Save Game";
-            shopOptions[shopItems.Length + 1] = "8. Quit Game";
+            shopOptions[shopItems.Length] = "Save Game";
+            shopOptions[shopItems.Length + 1] = "Quit Game";
 
             // Returns the new list.
             return shopOptions;
@@ -295,31 +295,34 @@ namespace RPGShop
             {
                 // ...this option, they buy the first item in the shop list.
                 case 0:
-                    _player.Buy(_shop.Inventory[0]);
+                    _shop.Sell(_player, choice);
                     break;
                 // ...this option, they buy the second item in the shop list.
                 case 1:
-                    _player.Buy(_shop.Inventory[1]);
+                    _shop.Sell(_player, choice);
                     break;
                 // ...this option, they buy the third item in the shop list.
                 case 2:
-                    _player.Buy(_shop.Inventory[2]);
+                    _shop.Sell(_player, choice);
                     break;
                 // ...this option, they buy the fourth item in the shop list.
                 case 3:
-                    _player.Buy(_shop.Inventory[3]);
+                    _shop.Sell(_player, choice);
                     break;
                 // ...this option, they buy the fifth item in the shop list.
                 case 4:
-                    _player.Buy(_shop.Inventory[4]);
+                    _shop.Sell(_player, choice);
                     break;
                 // ...this option, they buy the sixth item in the shop list.
                 case 5:
-                    _player.Buy(_shop.Inventory[5]);
+                    _shop.Sell(_player, choice);
                     break;
                 // ...this option, they save the game.
                 case 6:
                     Save();
+                    Console.WriteLine("I'll keep these here for you.");
+                    Console.ReadKey(true);
+                    Console.Clear();
                     break;
                 // ...this option, they exit the game.
                 case 7:
