@@ -74,10 +74,13 @@ namespace RPGShop
         /// <param name="writer"> What writes to the file. </param>
         public void Save(StreamWriter writer)
         {
+            // Saves the player's gold.
             writer.WriteLine(_gold);
 
+            // Saves the length of the player's inventory.
             writer.WriteLine(_inventory.Length);
 
+            // Saves each item in the player's inventory.
             for(int i = 0; i < _inventory.Length; i++)
             {
                 writer.WriteLine(_inventory[i].Name);
@@ -114,6 +117,7 @@ namespace RPGShop
 
             int i = 0;
 
+            // Gets the player's previous items and adds them to their inventory.
             while(!(reader.EndOfStream))
             {
                 _inventory[i].Name = reader.ReadLine();
