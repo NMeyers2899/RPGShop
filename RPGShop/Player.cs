@@ -32,7 +32,7 @@ namespace RPGShop
             // Creates a copy of the players inventory with a new space to add the item to.
             Item[] newPlayerInventory = new Item[_inventory.Length + 1];
                 
-            // ...if it can, it tells the player they purchased the item.
+            // Tells the player they purchased the item.
             Console.WriteLine("You purchased " + item.Name + "!");
 
             // Adds each item from the player's inventory to the new array.
