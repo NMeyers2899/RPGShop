@@ -16,7 +16,7 @@ namespace RPGShop
         private Player _player;
         private Shop _shop;
         private bool _gameOver = false;
-        private int __currentScene = 0;
+        private int _currentScene = 0;
 
         /// <summary>
         /// Runs the main game loop.
@@ -38,6 +38,7 @@ namespace RPGShop
         /// </summary>
         private void Start()
         {
+            // Initalizes the items and creates a new shop with those items in it.
             InitializeItems();
         }
 
@@ -140,7 +141,14 @@ namespace RPGShop
         /// </summary>
         private void Save()
         {
+            // Creates the save file for the game.
+            StreamWriter writer = new StreamWriter("SaveData.txt");
 
+            // Saves the player's information.
+            _player.Save(writer);
+
+            // Closes the file.
+            writer.Close();
         }
 
         /// <summary>
@@ -148,58 +156,177 @@ namespace RPGShop
         /// </summary>
         /// <returns> If the player can load the game or not. </returns>
         private bool Load()
-        {
+        { 
+            // If the file doesn't exist...
+            if (!File.Exists("SaveData.txt"))
+            {
+                // ...it sets loadingSuccessful to false.
+                return false;
+            }
 
+            // Creates a reader.
+            StreamReader reader = new StreamReader("SaveData.txt");
+
+            // Loads the player's gold and their previous inventory.
+            if (!_player.Load(reader))
+            {
+                return false;
+            }
+
+            //Closes the file.
+            reader.Close();
+
+            // Returns loadingSuccessful.
+            return true;
         }
 
+        /// <summary>
+        /// Finds the current scene and displays it to the player.
+        /// </summary>
         private void DisplayCurrentScene()
         {
-            switch (__currentScene)
+            switch (_currentScene)
             {
+                // Displays the opening menu where the player can either start a new game or load a previous save.
                 case 0:
                     DisplayOpeningMenu();
+                    break;
+                // Displays the shop menu where a player can buy items, save, or quit.
+                case 1:
+                    DisplayShopMenu();
                     break;
             }
         }
 
+        /// <summary>
+        /// Allows the player to either start a new game or load a previous save.
+        /// </summary>
         private void DisplayOpeningMenu()
         {
+            // Gives the player the option to either start shopping, or to load their previous inventory.
             int choice = GetInput("Welcome to my shop! You've come to browse, yes?", "Start Shopping",
                 "Load Inventory");
 
             switch (choice)
             {
+                // The player starts a new game.
                 case 0:
                     Console.WriteLine("Come! Have a look around!");
                     Console.ReadKey(true);
                     Console.Clear();
+                    _currentScene = 1;
                     break;
+                    // The player attempts to load their previous inventory.
                 case 1:
                     Console.WriteLine("A previous customer, eh? Let me see.");
                     Console.ReadKey(true);
+                    // If they can't the game brings them to the opening menu.
                     if (!Load())
                     {
                         Console.WriteLine("You have no record here. But come, shop away!");
                         Console.ReadKey(true);
                         Console.Clear();
+                        return;
                     }
+                    // If they can, the player's previous inventory and gold are loaded and they are taken into
+                    // the shop.
                     else
                     {
                         Console.WriteLine("Welcome back to the store, friend!");
                         Console.ReadKey(true);
                         Console.Clear();
+                        _currentScene = 1;
                     }
                     break;
             }
         }
 
+        /// <summary>
+        /// Gets the item names from the shop and adds a save and quit option.
+        /// </summary>
+        /// <returns> The string for the menu options. </returns>
         private string[] GetShopMenuOptions()
         {
+            // Grabs the item names and their costs from the shop.
+            string[] shopItems = _shop.GetItemNames();
 
+            // Creates a new array that will append the save and quit feature to the items.
+            string[] shopOptions = new string[shopItems.Length + 2];
+
+            // Sets all of the items as menu options.
+            for (int i = 0; i < shopItems.Length; i++)
+            {
+                shopOptions[i] = shopItems[i];
+            }
+
+            // Appends the new options to the item list from the shop.
+            shopOptions[shopItems.Length] = "7. Save Game";
+            shopOptions[shopItems.Length + 1] = "8. Quit Game";
+
+            // Returns the new list.
+            return shopOptions;
         }
 
+        /// <summary>
+        /// Displays the shop menu to the player, allowing them to buy the items and save or quit.
+        /// </summary>
         private void DisplayShopMenu()
         {
+            string[] playerInventory = _player.GetItemNames();
+
+            // Displays the player's gold and items to the screen.
+            Console.WriteLine("Your Gold: " + _player.Gold);
+            Console.WriteLine("Your Inventory: ");
+            for(int i = 0; i < playerInventory.Length; i++)
+            {
+                Console.WriteLine(playerInventory[i]);
+            }
+
+            Console.WriteLine();
+
+            // Gets the menu options from the get function.
+            string[] menuOptions = GetShopMenuOptions();
+
+            // Asks the player which item they would like to buy, and if they would like to save or quit.
+            int choice = GetInput("What will you be buying?", menuOptions);
+
+            // If the player picks...
+            switch (choice)
+            {
+                // ...this option, they buy the first item in the shop list.
+                case 0:
+                    _player.Buy(_shop.Inventory[0]);
+                    break;
+                // ...this option, they buy the second item in the shop list.
+                case 1:
+                    _player.Buy(_shop.Inventory[1]);
+                    break;
+                // ...this option, they buy the third item in the shop list.
+                case 2:
+                    _player.Buy(_shop.Inventory[2]);
+                    break;
+                // ...this option, they buy the fourth item in the shop list.
+                case 3:
+                    _player.Buy(_shop.Inventory[3]);
+                    break;
+                // ...this option, they buy the fifth item in the shop list.
+                case 4:
+                    _player.Buy(_shop.Inventory[4]);
+                    break;
+                // ...this option, they buy the sixth item in the shop list.
+                case 5:
+                    _player.Buy(_shop.Inventory[5]);
+                    break;
+                // ...this option, they save the game.
+                case 6:
+                    Save();
+                    break;
+                // ...this option, they exit the game.
+                case 7:
+                    _gameOver = true;
+                    break;
+            }
+
 
         }
     }
